@@ -32,7 +32,6 @@ long interval = 0;
 int division = 0;
 
 
-
 //Total runtime of the process. Used for timer purposes
 
 mcp2515_can CAN(SPI_CS_PIN);   //Set CS Pin using SEEED Library
@@ -56,6 +55,8 @@ void setup()
   pinMode(pin9, OUTPUT);
   pinMode(pin10, OUTPUT);
   pinMode(pin11, OUTPUT);
+
+  WatchDog::init(OVF_500MS);
 }
 /*
   void WatchDog()
@@ -123,10 +124,6 @@ void loop()
     digitalWrite(pin10, LOW)
   }
 
-  else {
-    heartTimer = timer;
-    colorTimer = timer;
-  }
 
   // Color signal conditions
 
