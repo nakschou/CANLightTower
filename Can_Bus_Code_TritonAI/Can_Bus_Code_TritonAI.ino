@@ -88,6 +88,7 @@ void loop()
     }
 
     counter = timer;   //Set "counter" to the time when a signal is received
+    heartTimer = timer; //Update heartTimer whenever a CAN signal is received
   }
 
   String readString = buf;   //Turn CAN message into readable stirng
