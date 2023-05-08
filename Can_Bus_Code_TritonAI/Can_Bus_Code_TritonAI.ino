@@ -22,7 +22,7 @@ int dash2;
 int dash3;
 
 unsigned long timer = millis();   //Initialize variables for time dependent color patterns
-unsigned long flag1 = 0;
+unsigned long flag1 = 0;          //Flag for Buzzer
 unsigned long flag2 = 0;
 static unsigned long heartHold = 250;
 long heartTimer = 0;
@@ -94,6 +94,7 @@ void loop()
   String readString = buf;   //Turn CAN message into readable stirng
 
   // Parse Can-Bus data into workable Strings
+  //Data expected in Color-Time-Repetition
   dash1 = readString.indexOf('-');  //finds location of first '-'
   color = readString.substring(0, dash1);   //captures first data String
   dash2 = readString.indexOf('-', dash1 + 1); //finds location of second '-'
