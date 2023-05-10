@@ -4,34 +4,58 @@ There are no delays in a Non-Blocking Format
 */
 
 //const int BUTTON_PIN    = -;
-const int RELAY_PIN     = 4;
-//const int LED_BUILTIN     = 13;//D13?
-bool is_on = false;
+const int RED_RELAY_PIN = 4;
+const int YELLOW_RELAY_PIN = 5;
+const int GREEN_RELAY_PIN = 6;
+const int BUZZER_RELAY_PIN = 7;
+
+const int 
+
+const int THRESHOLD = 1000; //ms
+const int RED_LED_BUILTIN = 13;//D13?
+const int YELLOW_LED_BUILTIN = 14;//D13?
+const int GREEN_LED_BUILTIN = 15;//D13?
+const int BUZZER_LED_BUILTIN = 16;//D13?
+
 void setup() {
   //Define each Digital pin to be an output or input
   //pinMode(BUTTON_PIN,INPUT);
-  pinMode(RELAY_PIN,OUTPUT);
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(RED_RELAY_PIN,OUTPUT);
+  pinMode(RED_LED_BUILTIN, OUTPUT);
+  pinMode(YELLOW_RELAY_PIN,OUTPUT);
+  pinMode(YELLOW_LED_BUILTIN, OUTPUT);
+  pinMode(GREEN_RELAY_PIN,OUTPUT);
+  pinMode(GREEN_LED_BUILTIN, OUTPUT);
+  pinMode(BUZZER_RELAY_PIN,OUTPUT);
+  pinMode(BUZZER_LED_BUILTIN, OUTPUT);
 }
   
-unsigned long before = millis();
+unsigned long redbefore = millis();
+unsigned long yellowbefore = millis();
+unsigned long greenbefore = millis();
+unsigned long buzzerbefore = millis();
 
 void loop() {
-unsigned long now = millis();
-	if (now - before >= 1000 && is_on==false) {
-    digitalWrite(RELAY_PIN, HIGH);  // turn the Relay on (HIGH is the voltage level)
-    digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
-    is_on = true;
-    before = now;
+  unsigned long now = millis();
+  if(update(THRESHOLD, redbefore, now, RED_RELAY_PIN, RED_LED_BUILTIN)) {
+    redbefore = now;
   }
-  else if(now - before >= 1000 && is_on == true){
-    digitalWrite(RELAY_PIN, LOW);   // turn the LED off by making the voltage LOW
-    digitalWrite(LED_BUILTIN, LOW);  // turn the LED on (HIGH is the voltage level)
-    is_on = false;
-    before = now;
+  if(update(THRESHOLD, yellowbefore, now, YELLOW_RELAY_PIN, YELLOW_LED_BUILTIN)) {
+    yellowbefore = now;
+  }
+  if(update(THRESHOLD, greenbefore, now, GREEN_RELAY_PIN, GREEN_LED_BUILTIN)) {
+    greenbefore = now;
+  }
+  if(update(THRESHOLD, redbefore, now, BUZZER_RELAY_PIN, BUZZER_LED_BUILTIN)) {
+    buzzerbefore = now;
   }
 }
-  
 
-
-
+boolean update(int time, unsigned long before, unsigned long now, int RELAY_PIN, int LED_BUILTIN) {
+  if(now-before >= time) {
+    digitalWrite(RELAY_PIN, !digitalRead(RELAY_PIN));
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+    return true;
+  }
+  return false;
+}
