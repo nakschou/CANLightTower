@@ -31,14 +31,22 @@ long counter = 0;
 long interval = 0;
 int division = 0;
 
+unsigned long redbefore = millis();
+unsigned long yellowbefore = millis();
+unsigned long greenbefore = millis();
+unsigned long buzzerbefore = millis();
+
+unsigned int redcount = 0;
+unsigned int yellowcount = 0;
+unsigned int greencount = 0;
+unsigned int buzzercount = 0;
 
 //Total runtime of the process. Used for timer purposes
 
 mcp2515_can CAN(SPI_CS_PIN);   //Set CS Pin using SEEED Library
 
 
-void setup()
-{
+void setup() {
   // Ensure that can bus signals can be received
   Serial.begin(115200);
   while (!Serial);
@@ -64,15 +72,13 @@ void setup()
 
   }
 */
-void loop()
-{
+void loop() {
   attachInterrupt(digitalPinToInterrupt(SPI_CS_PIN), MCP2515_ISR, RISING);   //Trigger an interrupt whenever a new CAN-BUS signal is received
 
   unsigned char len = 0;    //Variables which acquire Can-Bus message data
   unsigned char buf[8];
 
-  if (CAN_MSGAVAIL == CAN.checkReceive())
-  {
+  if (CAN_MSGAVAIL == CAN.checkReceive()) {  //Check if a CAN signal is available
     CAN.readMsgBuf(&len, buf);    // read data.  len = data length, buf = data buffer
 
     unsigned long canId = CAN.getCanId();
@@ -81,8 +87,7 @@ void loop()
     Serial.print("Get data from ID: ");
     Serial.println(canId, HEX);
 
-    for (int i = 0; i < len; i++) // print the data
-    {
+    for (int i = 0; i < len; i++) { //print the data
       Serial.print(buf[i], HEX);
       Serial.print("\t");
     }
@@ -116,69 +121,95 @@ void loop()
   interval = timer - counter;
   division = interval / heartHold;
 
-  if (division % 2 == 0) && (flag1 == 1)
-  {
+  if (division % 2 == 0) && (flag1 == 1) {
     digitalWrite(pin10, HIGH)
   }
 
-  else if (division % 2 == 1) && (flag1 == 1)
-  {
+  else if (division % 2 == 1) && (flag1 == 1) {
     digitalWrite(pin10, LOW)
   }
 
 
   // Color signal conditions
 
-  if (timeInterval == "1")
-  {
+  if (timeInterval == "1") {
     digitalWrite(pin11, HIGH);
   }
 
-  else if (timeInterval == "0")
-  {
+  else if (timeInterval == "0") {
     digitalWrite(pin11, LOW);
   }
 
-  else
-  {
+  else {
     flag2 = (timer - colorTimer) >= timeInterval;
-    for i = 1 : count
-      {
-        if (color == "buzzer") && (flag2 == 1)
-          {
+    for i = 1 : count {
+      if (color == "buzzer") && (flag2 == 1) {
             digitalWrite(pin11, HIGH);
-          }
-
-      else if (color == "buzzer") && (flag2 == 0)
-          {
-            digitalWrite(pin11, LOW);
-          }
       }
-   }
 
-  /*
-    if (color == "red")
-    {
-      digitalWrite(pin10, HIGH);
+      else if (color == "buzzer") && (flag2 == 0) {
+            digitalWrite(pin11, LOW);
+      }
     }
+  }
+}
 
-    if (color == "green")
-    {
-      digitalWrite(pin9, HIGH);
+void red_relay_operation(int duration, int repetitions) {
+  unsigned long now = millis();
+  if(now-redbefore >= duration) {
+    //Serial.print("Here" + repetitions-1);
+    if(count == 0) {
+      digitalWrite(RED_RELAY_PIN, LOW);
+      return;
     }
-    else
-    {
-      digitalWrite(pin9, LOW);
-    }
+    digitalWrite(RED_RELAY_PIN, !digitalRead(RED_RELAY_PIN));
+    greenbefore = now;
+    count = count - 1;
+    //Serial.print(count);
+  }
+}
 
-    if (color == "yellow")
-    {
-      digitalWrite(pin8, HIGH);
+void yellow_relay_operation(int duration, int repetitions) {
+  unsigned long now = millis();
+  if(now-yellowbefore >= duration) {
+    //Serial.print("Here" + repetitions-1);
+    if(count == 0) {
+      digitalWrite(YELLOW_RELAY_PIN, LOW);
+      return;
     }
-    else
-    {
-      digitalWrite(pin8, LOW);
-    }
+    digitalWrite(YELLOW_RELAY_PIN, !digitalRead(YELLOW_RELAY_PIN));
+    greenbefore = now;
+    count = count - 1;
+    //Serial.print(count);
+  }
+}
 
+void green_relay_operation(int duration, int repetitions) {
+  unsigned long now = millis();
+  if(now-greenbefore >= duration) {
+    //Serial.print("Here" + repetitions-1);
+    if(count == 0) {
+      digitalWrite(GREEN_RELAY_PIN, LOW);
+      return;
     }
+    digitalWrite(GREEN_RELAY_PIN, !digitalRead(GREEN_RELAY_PIN));
+    greenbefore = now;
+    count = count - 1;
+    //Serial.print(count);
+  }
+}
+
+void buzzer_relay_operation(int duration, int repetitions) {
+  unsigned long now = millis();
+  if(now-greenbefore >= duration) {
+    //Serial.print("Here" + repetitions-1);
+    if(count == 0) {
+      digitalWrite(BUZZER_RELAY_PIN, LOW);
+      return;
     }
+    digitalWrite(BUZZER_RELAY_PIN, !digitalRead(BUZZER_RELAY_PIN));
+    greenbefore = now;
+    count = count - 1;
+    //Serial.print(count);
+  }
+}

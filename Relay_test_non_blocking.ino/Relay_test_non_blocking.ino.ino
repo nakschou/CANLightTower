@@ -31,10 +31,10 @@ unsigned long redbefore = millis();
 unsigned long yellowbefore = millis();
 unsigned long greenbefore = millis();
 unsigned long buzzerbefore = millis();
-
+int count = 6;
 
 void loop() {
-  unsigned long now = millis();
+  /*unsigned long now = millis();
   if(now-redbefore >= THRESHOLD) {
     digitalWrite(RED_RELAY_PIN, !digitalRead(RED_RELAY_PIN));
     digitalWrite(RED_LED_BUILTIN, !digitalRead(RED_LED_BUILTIN));
@@ -54,5 +54,23 @@ void loop() {
     digitalWrite(BUZZER_RELAY_PIN, !digitalRead(BUZZER_RELAY_PIN));
     digitalWrite(BUZZER_LED_BUILTIN, !digitalRead(BUZZER_LED_BUILTIN));
     buzzerbefore = now;
+  }*/
+  relay_operation(500, count);
+}
+void relay_operation(int duration, int repetitions) {
+  unsigned long now = millis();
+  if(now-greenbefore >= duration) {
+    //Serial.print("Here" + repetitions-1);
+    if(count == 0) {
+      digitalWrite(GREEN_RELAY_PIN, LOW);
+      return;
+    }
+    digitalWrite(GREEN_RELAY_PIN, !digitalRead(GREEN_RELAY_PIN));
+    greenbefore = now;
+    count = count - 1;
+    Serial.print(count);
   }
+}
+void setCount(int num) {
+  count = num;
 }
