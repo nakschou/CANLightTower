@@ -1,4 +1,16 @@
 //#include <WatchDog.h>
+
+/*Please Implement the folowing functions:
+1.Steady green light
+2.Flashing Green & rotating yellow
+3.Steady Yellow
+4.flashing yellow and rotating yellow
+5.slow flash red
+6.fast flash red
+7.steady red
+8.turn all off
+
+*/
 #include <can-serial.h>
 #include <mcp2515_can.h>
 #include <mcp_can.h>
@@ -80,6 +92,8 @@ void loop() {
     CAN.readMsgBuf(&len, buf);    // read data.  len = data length, buf = data buffer
 
     unsigned long canId = CAN.getCanId();
+
+    //This is where we will add a switch statement to decide which of the functions to perform: steady red, flashing etc.
 
     heartTimer = timer; //Update heartTimer whenever a CAN signal is received
   }
