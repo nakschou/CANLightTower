@@ -1,11 +1,11 @@
+//#include <WatchDog.h>
 #include <can-serial.h>
 #include <mcp2515_can.h>
 #include <mcp_can.h>
-#include <WatchDog.h>
 #include <SPI.h>
 #include "mcp_can.h"
 
-const int heartbeatseizuretime = 100 //ms
+const int heartbeatseizuretime = 100; //ms
 
 const int SPI_CS_PIN = 17;  //Can Bus CS pin using LONGAN library
 int RED_RELAY_PIN = 8;   //Initialize pins for sending signals to the relay
@@ -64,7 +64,7 @@ void setup() {
   pinMode(GREEN_RELAY_PIN, OUTPUT);
   pinMode(BUZZER_RELAY_PIN, OUTPUT);
 
-  WatchDog::init(OVF_500MS);
+  //WatchDog::init(OVF_500MS);
 }
 /*
   void WatchDog()
@@ -73,8 +73,6 @@ void setup() {
   }
 */
 void loop() {
-  attachInterrupt(digitalPinToInterrupt(SPI_CS_PIN), MCP2515_ISR, RISING);   //Trigger an interrupt whenever a new CAN-BUS signal is received
-
   unsigned char len = 0;    //Variables which acquire Can-Bus message data
   unsigned char buf[8];
 
@@ -86,7 +84,7 @@ void loop() {
     heartTimer = timer; //Update heartTimer whenever a CAN signal is received
   }
   timer = millis(); //Update timer
-  checkHeartTimer();
+  checkHeartBeat();
 
   boolean redcond = false; //example of a condition for a color signal
   if(redcond) {
@@ -107,7 +105,7 @@ void red_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(RED_RELAY_PIN, !digitalRead(RED_RELAY_PIN));
     redbefore = now;
-    count = count - 1;
+    redcount = redcount - 1;
     //Serial.print(count);
   }
 }
@@ -123,7 +121,7 @@ void yellow_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(YELLOW_RELAY_PIN, !digitalRead(YELLOW_RELAY_PIN));
     yellowbefore = now;
-    count = count - 1;
+    yellowcount = yellowcount - 1;
     //Serial.print(count);
   }
 }
@@ -138,7 +136,7 @@ void green_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(GREEN_RELAY_PIN, !digitalRead(GREEN_RELAY_PIN));
     greenbefore = now;
-    count = count - 1;
+    greencount = greencount - 1;
     //Serial.print(count);
   }
 }
@@ -153,7 +151,7 @@ void buzzer_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(BUZZER_RELAY_PIN, !digitalRead(BUZZER_RELAY_PIN));
     buzzerbefore = now;
-    count = count - 1;
+    buzzercount = buzzercount - 1;
     //Serial.print(count);
   }
 }
@@ -168,7 +166,7 @@ void rotate_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(ROTATE_RELAY_PIN, !digitalRead(ROTATE_RELAY_PIN));
     rotatebefore = now;
-    count = count - 1;
+    rotatecount = rotatecount - 1;
     //Serial.print(count);
   }
 }
