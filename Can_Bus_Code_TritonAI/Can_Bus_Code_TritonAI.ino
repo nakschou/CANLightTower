@@ -12,6 +12,7 @@ int RED_RELAY_PIN = 8;   //Initialize pins for sending signals to the relay
 int YELLOW_RELAY_PIN = 9;
 int GREEN_RELAY_PIN = 10;
 int BUZZER_RELAY_PIN = 11;
+int ROTATE_RELAY_PIN = 12;
 
 String readString;    //Initialize strings for reading Can-Bus signals
 String color;
@@ -113,6 +114,7 @@ void red_relay_operation(int duration, int repetitions) {
 
 void yellow_relay_operation(int duration, int repetitions) {
   unsigned long now = millis();
+  //if the time has passed
   if(now-yellowbefore >= duration) {
     //Serial.print("Here" + repetitions-1);
     if(count == 0) {
@@ -151,6 +153,21 @@ void buzzer_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(BUZZER_RELAY_PIN, !digitalRead(BUZZER_RELAY_PIN));
     buzzerbefore = now;
+    count = count - 1;
+    //Serial.print(count);
+  }
+}
+
+void rotate_relay_operation(int duration, int repetitions) {
+  unsigned long now = millis();
+  if(now-rotatebefore >= duration) {
+    //Serial.print("Here" + repetitions-1);
+    if(count == 0) {
+      digitalWrite(ROTATE_RELAY_PIN, LOW);
+      return;
+    }
+    digitalWrite(ROTATE_RELAY_PIN, !digitalRead(ROTATE_RELAY_PIN));
+    rotatebefore = now;
     count = count - 1;
     //Serial.print(count);
   }
