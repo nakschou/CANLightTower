@@ -1,4 +1,4 @@
-//#include <WatchDog.h>
+#include <WatchDog.h>
 
 /*Please Implement the folowing functions:
 1.Steady green light
@@ -18,6 +18,9 @@
 #include "mcp_can.h"
 
 const int heartbeatseizuretime = 100; //ms
+const int greenflashtime = 500; //ms
+const int yellowflashtime = 500; //ms
+const int slowredflashtime = 1000;
 
 const int SPI_CS_PIN = 17;  //Can Bus CS pin using LONGAN library
 int RED_RELAY_PIN = 8;   //Initialize pins for sending signals to the relay
@@ -53,6 +56,15 @@ unsigned int greencount = 0;
 unsigned int buzzercount = 0;
 unsigned int rotatecount = 0;
 
+unsigned bool op_one = false;
+unsigned bool op_two = false;
+unsigned bool op_three = false;
+unsigned bool op_four = false;
+unsigned bool op_five = false;
+unsigned bool op_six = false;
+unsigned bool op_seven = false;
+unsigned bool op_eight = false;
+
 //Total runtime of the process. Used for timer purposes
 
 mcp2515_can CAN(SPI_CS_PIN);   //Set CS Pin using SEEED Library
@@ -76,7 +88,7 @@ void setup() {
   pinMode(GREEN_RELAY_PIN, OUTPUT);
   pinMode(BUZZER_RELAY_PIN, OUTPUT);
 
-  //WatchDog::init(OVF_500MS);
+  WatchDog::init(OVF_500MS);
 }
 /*
   void WatchDog()
@@ -100,12 +112,10 @@ void loop() {
   timer = millis(); //Update timer
   checkHeartBeat();
 
-  boolean redcond = false; //example of a condition for a color signal
-  if(redcond) {
-    redcount = 5;
-    red_relay_operation(heartbeatseizuretime, redcount);
+  boolean cond = false; // example setup
+  if(cond) {
+    steadyGreenLight();
   }
-  // Color signal conditions
 
 }
 
@@ -170,19 +180,8 @@ void buzzer_relay_operation(int duration, int repetitions) {
   }
 }
 
-void rotate_relay_operation(int duration, int repetitions) {
-  unsigned long now = millis();
-  if(now-rotatebefore >= duration) {
-    //Serial.print("Here" + repetitions-1);
-    if(count == 0) {
-      digitalWrite(ROTATE_RELAY_PIN, LOW);
-      return;
-    }
-    digitalWrite(ROTATE_RELAY_PIN, !digitalRead(ROTATE_RELAY_PIN));
-    rotatebefore = now;
-    rotatecount = rotatecount - 1;
-    //Serial.print(count);
-  }
+void rotate_relay_operation() {
+  digitalWrite(ROTATE_RELAY_PIN, HIGH);
 }
 
 void checkHeartBeat() {
@@ -192,4 +191,78 @@ void checkHeartBeat() {
   } else {
     redcount = 0;
   }
+}
+
+void steadyGreenLight() {
+  if(op_one) {
+    digitalWrite(GREEN_RELAY_PIN, HIGH);
+  }
+}
+
+void flashGreenRotateYellow() {
+  if(op_two) {
+    greencount = 1;
+  }
+  green_relay_operation(greenflashtime, greencount);
+  rotate_relay_operation();
+}
+
+void steadyYellow() {
+  if(op_three) {
+    digitalWrite(YELLOW_RELAY_PIN, HIGH);
+  }
+}
+
+void flashYellowRotateYellow() {
+  if(op_four) {
+    op_three = false;
+    yellowcount = 1;
+  }
+  yellow_relay_operation(yellowflashtime, yellowcount);
+  rotate_relay_operation();
+}
+
+void slowFlashRed() {
+  if(op_five) {
+    op_six = false;
+    redcount = 1;
+  }
+  red_relay_operation(slowredflashtime, redcount);
+}
+
+void fastFlashRed() {
+  if(op_six) {
+    op_five = false;
+    redcount = 1;
+  }
+  red_relay_operation(heartbeatseizuretime, redcount);
+}
+
+void steadyRed() {
+  if(op_seven) {
+    op_five = false;
+    op_six = false;
+    digitalWrite(RED_RELAY_PIN, HIGH);
+  }
+}
+
+void turnAllOff() {
+  op_one = false;
+  op_two = false;
+  op_three = false;
+  op_four = false;
+  op_five = false;
+  op_six = false;
+  op_seven = false;
+  op_eight = false;
+  redcount = 0;
+  yellowcount = 0;
+  greencount = 0;
+  buzzercount = 0;
+  rotatecount = 0;
+  digitalWrite(RED_RELAY_PIN, LOW);
+  digitalWrite(YELLOW_RELAY_PIN, LOW);
+  digitalWrite(GREEN_RELAY_PIN, LOW);
+  digitalWrite(BUZZER_RELAY_PIN, LOW);
+  digitalWrite(ROTATE_RELAY_PIN, LOW);
 }
