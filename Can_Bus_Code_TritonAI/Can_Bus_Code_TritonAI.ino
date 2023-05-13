@@ -1,4 +1,4 @@
-#include <WatchDog.h>
+//#include <WatchDog.h>
 
 /*Please Implement the folowing functions:
 1.Steady green light
@@ -11,9 +11,8 @@
 8.turn all off
 
 */
-#include <can-serial.h>
-#include <mcp2515_can.h>
-#include <mcp_can.h>
+//#include <can-serial.h>
+//#include <mcp2515_can.h>
 #include <SPI.h>
 #include "mcp_can.h"
 
@@ -56,18 +55,18 @@ unsigned int greencount = 0;
 unsigned int buzzercount = 0;
 unsigned int rotatecount = 0;
 
-unsigned bool op_one = false;
-unsigned bool op_two = false;
-unsigned bool op_three = false;
-unsigned bool op_four = false;
-unsigned bool op_five = false;
-unsigned bool op_six = false;
-unsigned bool op_seven = false;
-unsigned bool op_eight = false;
+bool op_one = false;
+bool op_two = false;
+bool op_three = false;
+bool op_four = false;
+bool op_five = false;
+bool op_six = false;
+bool op_seven = false;
+bool op_eight = false;
 
 //Total runtime of the process. Used for timer purposes
 
-mcp2515_can CAN(SPI_CS_PIN);   //Set CS Pin using SEEED Library
+MCP_CAN CAN(SPI_CS_PIN);   //Set CS Pin using SEEED Library
 
 
 void setup() {
@@ -87,8 +86,9 @@ void setup() {
   pinMode(YELLOW_RELAY_PIN, OUTPUT);
   pinMode(GREEN_RELAY_PIN, OUTPUT);
   pinMode(BUZZER_RELAY_PIN, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 
-  WatchDog::init(OVF_500MS);
+  //WatchDog::init(OVF_500MS);
 }
 /*
   void WatchDog()
@@ -104,9 +104,11 @@ void loop() {
     CAN.readMsgBuf(&len, buf);    // read data.  len = data length, buf = data buffer
 
     unsigned long canId = CAN.getCanId();
-
+     
     if(buf[0] == 1) {
       op_one = true;
+      digitalWrite(LED_BUILTIN, HIGH);
+      Serial.print("I made it");
     }
 
     //This is where we will add a switch statement to decide which of the functions to perform: steady red, flashing etc.
