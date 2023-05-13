@@ -90,12 +90,7 @@ void setup() {
 
   //WatchDog::init(OVF_500MS);
 }
-/*
-  void WatchDog()
-  {
 
-  }
-*/
 void loop() {
   unsigned char len = 0;    //Variables which acquire Can-Bus message data
   unsigned char buf[8];
@@ -106,8 +101,8 @@ void loop() {
     unsigned long canId = CAN.getCanId();
      
     if(buf[0] == 1) {
-      op_one = true;
-      digitalWrite(LED_BUILTIN, HIGH);
+      op_two= true;
+      
       Serial.print("I made it");
     }
 
@@ -167,6 +162,7 @@ void green_relay_operation(int duration, int repetitions) {
       return;
     }
     digitalWrite(GREEN_RELAY_PIN, !digitalRead(GREEN_RELAY_PIN));
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
     greenbefore = now;
     greencount = repetitions - 1;
     //Serial.print(count);
@@ -204,6 +200,7 @@ void checkHeartBeat() {
 void steadyGreenLight() {
   if(op_one) {
     digitalWrite(GREEN_RELAY_PIN, HIGH);
+    
   }
 }
 
