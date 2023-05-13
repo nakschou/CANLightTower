@@ -129,7 +129,7 @@ void red_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(RED_RELAY_PIN, !digitalRead(RED_RELAY_PIN));
     redbefore = now;
-    redcount = redcount - 1;
+    redcount = repetitions - 1;
     //Serial.print(count);
   }
 }
@@ -145,7 +145,7 @@ void yellow_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(YELLOW_RELAY_PIN, !digitalRead(YELLOW_RELAY_PIN));
     yellowbefore = now;
-    yellowcount = yellowcount - 1;
+    yellowcount = repetitions - 1;
     //Serial.print(count);
   }
 }
@@ -160,7 +160,7 @@ void green_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(GREEN_RELAY_PIN, !digitalRead(GREEN_RELAY_PIN));
     greenbefore = now;
-    greencount = greencount - 1;
+    greencount = repetitions - 1;
     //Serial.print(count);
   }
 }
@@ -175,7 +175,7 @@ void buzzer_relay_operation(int duration, int repetitions) {
     }
     digitalWrite(BUZZER_RELAY_PIN, !digitalRead(BUZZER_RELAY_PIN));
     buzzerbefore = now;
-    buzzercount = buzzercount - 1;
+    buzzercount = repetitions - 1;
     //Serial.print(count);
   }
 }
@@ -202,9 +202,9 @@ void steadyGreenLight() {
 void flashGreenRotateYellow() {
   if(op_two) {
     greencount = 1;
+    rotate_relay_operation();
   }
   green_relay_operation(greenflashtime, greencount);
-  rotate_relay_operation();
 }
 
 void steadyYellow() {
@@ -217,9 +217,9 @@ void flashYellowRotateYellow() {
   if(op_four) {
     op_three = false;
     yellowcount = 1;
+    rotate_relay_operation();
   }
   yellow_relay_operation(yellowflashtime, yellowcount);
-  rotate_relay_operation();
 }
 
 void slowFlashRed() {
