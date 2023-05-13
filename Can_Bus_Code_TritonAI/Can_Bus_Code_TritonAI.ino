@@ -105,6 +105,10 @@ void loop() {
 
     unsigned long canId = CAN.getCanId();
 
+    if(buf[0] == 1) {
+      op_one = true;
+    }
+
     //This is where we will add a switch statement to decide which of the functions to perform: steady red, flashing etc.
 
     heartTimer = timer; //Update heartTimer whenever a CAN signal is received
@@ -112,11 +116,13 @@ void loop() {
   timer = millis(); //Update timer
   checkHeartBeat();
 
-  boolean cond = false; // example setup
-  if(cond) {
-    steadyGreenLight();
-  }
-
+  steadyGreenLight();
+  flashGreenRotateYellow();
+  steadyYellow();
+  flashYellowRotateYellow();
+  slowFlashRed();
+  fastFlashRed();
+  steadyRed();
 }
 
 void red_relay_operation(int duration, int repetitions) {
