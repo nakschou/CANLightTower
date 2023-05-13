@@ -126,7 +126,7 @@ void red_relay_operation(int duration, int repetitions) {
   unsigned long now = millis();
   if(now-redbefore >= duration) {
     //Serial.print("Here" + repetitions-1);
-    if(count == 0) {
+    if(repetitions == 0) {
       digitalWrite(RED_RELAY_PIN, LOW);
       return;
     }
@@ -142,7 +142,7 @@ void yellow_relay_operation(int duration, int repetitions) {
   //if the time has passed
   if(now-yellowbefore >= duration) {
     //Serial.print("Here" + repetitions-1);
-    if(count == 0) {
+    if(repetitions == 0) {
       digitalWrite(YELLOW_RELAY_PIN, LOW);
       return;
     }
@@ -157,7 +157,7 @@ void green_relay_operation(int duration, int repetitions) {
   unsigned long now = millis();
   if(now-greenbefore >= duration) {
     //Serial.print("Here" + repetitions-1);
-    if(count == 0) {
+    if(repetitions == 0) {
       digitalWrite(GREEN_RELAY_PIN, LOW);
       return;
     }
@@ -173,7 +173,7 @@ void buzzer_relay_operation(int duration, int repetitions) {
   unsigned long now = millis();
   if(now-buzzerbefore >= duration) {
     //Serial.print("Here" + repetitions-1);
-    if(count == 0) {
+    if(repetitions == 0) {
       digitalWrite(BUZZER_RELAY_PIN, LOW);
       return;
     }
