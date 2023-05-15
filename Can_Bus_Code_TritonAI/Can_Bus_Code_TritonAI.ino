@@ -26,7 +26,7 @@ int RED_RELAY_PIN = 8;   //Initialize pins for sending signals to the relay
 int YELLOW_RELAY_PIN = 9;
 int GREEN_RELAY_PIN = 10;
 int BUZZER_RELAY_PIN = 11;
-int ROTATE_RELAY_PIN = 12;
+int ROTATE_RELAY_PIN = 4;
 
 String readString;    //Initialize strings for reading Can-Bus signals
 String color;
