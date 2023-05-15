@@ -22,11 +22,14 @@ const int yellowflashtime = 500; //ms
 const int slowredflashtime = 1000;
 
 const int SPI_CS_PIN = 17;  //Can Bus CS pin using LONGAN library
-int RED_RELAY_PIN = 8;   //Initialize pins for sending signals to the relay
-int YELLOW_RELAY_PIN = 9;
-int GREEN_RELAY_PIN = 10;
-int BUZZER_RELAY_PIN = 11;
+  //Initialize pins for sending signals to the relay
 int ROTATE_RELAY_PIN = 4;
+int CYCLE_RELAY_PIN = 5;
+int YELLOW_RELAY_PIN = 8;
+int BUZZER_RELAY_PIN = 9;
+int GREEN_RELAY_PIN = 10;
+int RED_RELAY_PIN = 11; 
+
 
 String readString;    //Initialize strings for reading Can-Bus signals
 String color;
