@@ -1,4 +1,4 @@
-//#include <WatchDog.h>
+#include <WatchDog.h>
 
 /*Please Implement the folowing functions:
 1.Steady green light
@@ -15,7 +15,6 @@
 //#include <mcp2515_can.h>
 #include <SPI.h>
 #include "mcp_can.h"
-#include <cstdint>
 
 const int heartbeatseizuretime = 100; //ms
 const int greenflashtime = 500; //ms
@@ -64,6 +63,7 @@ bool manual_mode = false;
 bool auto_mode = false;
 bool throttle_on = false;
 bool about_to_start = false;
+bool rtc_comms = false;
 
 //Total runtime of the process. Used for timer purposes
 
@@ -89,7 +89,7 @@ void setup() {
   pinMode(BUZZER_RELAY_PIN, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
 
-  //WatchDog::init(OVF_500MS);
+  WatchDog::init(isr, OVF_500MS);
 }
 
 void loop() {
@@ -119,6 +119,9 @@ void loop() {
       if(buf[0] == 4) {
         about_to_start = true;
       }
+      rtc_comms = true;
+    } else {
+      rtc_comms = false;
     }
      
     
@@ -243,7 +246,7 @@ void flashYellowRotateYellow() {
 }
 
 void slowFlashRed() {
-  if(0) {
+  if(rtc_comms) {
     redcount = 1;
   }
   red_relay_operation(slowredflashtime, redcount);
@@ -279,11 +282,6 @@ void turnAllOff() {
   digitalWrite(ROTATE_RELAY_PIN, LOW);
 }
 
-uint32_t byteArrayToUInt32(const char* byteArray) {
-    uint32_t value = 0;
-    for (int i = 0; i < 4; ++i) {
-        value <<= 8; // Shift value left by 8 bits
-        value |= static_cast<uint8_t>(byteArray[i]); // Bitwise OR with the byte value
-    }
-    return value;
+void isr() {
+  digitalWrite(GREEN_RELAY_PIN, !digitalRead(GREEN_RELAY_PIN));
 }
