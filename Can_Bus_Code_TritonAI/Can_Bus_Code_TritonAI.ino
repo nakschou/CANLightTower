@@ -15,6 +15,7 @@
 //#include <mcp2515_can.h>
 #include <SPI.h>
 #include "mcp_can.h"
+#include <cstdint>
 
 const int heartbeatseizuretime = 100; //ms
 const int greenflashtime = 500; //ms
@@ -29,6 +30,7 @@ int YELLOW_RELAY_PIN = 8;
 int BUZZER_RELAY_PIN = 9;
 int GREEN_RELAY_PIN = 10;
 int RED_RELAY_PIN = 11; 
+int CAN_ID = 3;
 
 
 String readString;    //Initialize strings for reading Can-Bus signals
@@ -58,14 +60,10 @@ unsigned int greencount = 0;
 unsigned int buzzercount = 0;
 unsigned int rotatecount = 0;
 
-bool op_one = false;
-bool op_two = false;
-bool op_three = false;
-bool op_four = false;
-bool op_five = false;
-bool op_six = false;
-bool op_seven = false;
-bool op_eight = false;
+bool manual_mode = false;
+bool auto_mode = false;
+bool throttle_on = false;
+bool about_to_start = false;
 
 //Total runtime of the process. Used for timer purposes
 
@@ -102,12 +100,28 @@ void loop() {
     CAN.readMsgBuf(&len, buf);    // read data.  len = data length, buf = data buffer
 
     unsigned long canId = CAN.getCanId();
-     
-    if(buf[0] == 1) {
-      op_two= true;
-      
-      Serial.print("I made it");
+    if(canId == 3) {
+      //put stuff in here TODO
+      if(buf[0] == 0) {
+        manual_mode = true;
+        auto_mode = false;
+      }
+      if(buf[0] == 1) {
+        manual_mode = false;
+        auto_mode = true;
+      }
+      if(buf[0] == 2) {
+        throttle_on = false;
+      }
+      if(buf[0] == 3) {
+        throttle_on = true;
+      }
+      if(buf[0] == 4) {
+        about_to_start = true;
+      }
     }
+     
+    
 
     //This is where we will add a switch statement to decide which of the functions to perform: steady red, flashing etc.
 
@@ -201,14 +215,13 @@ void checkHeartBeat() {
 }
 
 void steadyGreenLight() {
-  if(op_one) {
+  if(auto_mode && !throttle_on) {
     digitalWrite(GREEN_RELAY_PIN, HIGH);
-    
   }
 }
 
 void flashGreenRotateYellow() {
-  if(op_two) {
+  if(auto_mode && throttle_on) {
     greencount = 1;
     rotate_relay_operation();
   }
@@ -216,14 +229,13 @@ void flashGreenRotateYellow() {
 }
 
 void steadyYellow() {
-  if(op_three) {
+  if(manual_mode && !throttle_on) {
     digitalWrite(YELLOW_RELAY_PIN, HIGH);
   }
 }
 
 void flashYellowRotateYellow() {
-  if(op_four) {
-    op_three = false;
+  if(manual_mode && throttle_on) {
     yellowcount = 1;
     rotate_relay_operation();
   }
@@ -231,38 +243,30 @@ void flashYellowRotateYellow() {
 }
 
 void slowFlashRed() {
-  if(op_five) {
-    op_six = false;
+  if(0) {
     redcount = 1;
   }
   red_relay_operation(slowredflashtime, redcount);
 }
 
 void fastFlashRed() {
-  if(op_six) {
-    op_five = false;
+  if(0) {
     redcount = 1;
   }
   red_relay_operation(heartbeatseizuretime, redcount);
 }
 
 void steadyRed() {
-  if(op_seven) {
-    op_five = false;
-    op_six = false;
+  if(0) {
     digitalWrite(RED_RELAY_PIN, HIGH);
   }
 }
 
 void turnAllOff() {
-  op_one = false;
-  op_two = false;
-  op_three = false;
-  op_four = false;
-  op_five = false;
-  op_six = false;
-  op_seven = false;
-  op_eight = false;
+  manual_mode = false;
+  auto_mode = false;
+  throttle_on = false;
+  about_to_start = false;
   redcount = 0;
   yellowcount = 0;
   greencount = 0;
@@ -273,4 +277,13 @@ void turnAllOff() {
   digitalWrite(GREEN_RELAY_PIN, LOW);
   digitalWrite(BUZZER_RELAY_PIN, LOW);
   digitalWrite(ROTATE_RELAY_PIN, LOW);
+}
+
+uint32_t byteArrayToUInt32(const char* byteArray) {
+    uint32_t value = 0;
+    for (int i = 0; i < 4; ++i) {
+        value <<= 8; // Shift value left by 8 bits
+        value |= static_cast<uint8_t>(byteArray[i]); // Bitwise OR with the byte value
+    }
+    return value;
 }
